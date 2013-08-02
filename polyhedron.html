@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja-JP">
+	<head>
+		<title>正多面体</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #f0f0f0;
+				margin: 0px;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+	<body>
+		<script src="js/canvas3d.js"></script>
+		<script>
+			var scene,camera,renderer;
+			init();
+			animate();
+			function init() {
+				var container = document.createElement( 'div' );
+				document.body.appendChild( container );
+				var c3d = new C3D();
+				renderer = new C3D.Renderer();
+				renderer.setSize(window.innerWidth, window.innerHeight);
+				container.appendChild( renderer.canvas );
+				var a = new C3D.Vector3(1,1,1);
+				var b = new C3D.Vector3(2,2,-2);
+				var c = C3D.Vector3.InnerProduct(a, b);
+				var d = C3D.Vector3.ExteriorProduct(a, b);
+				
+				//scene
+				scene = new C3D.Scene();
+				//camera
+				camera = new C3D.Camera();
+				//イベントリスナー　リサイズ
+				window.addEventListener('resize', onWindowResize, false);
+			}
+			function onWindowResize() {
+
+				camera.setAspect = window.innerWidth / window.innerHeight;
+				//camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight);
+
+				render();
+
+			}
+			function animate() {
+				requestAnimationFrame( animate );
+				render();
+			}
+			function render() {
+				renderer.dot(new C3D.Vector2(10,10));
+				var a,b;
+				for (var i = 0; i <= 10; i++) {
+					a = new C3D.Vector2(0, i*20);
+					b = new C3D.Vector2(1000, i*20);
+					renderer.line(a, b);
+				}
+			}
+		</script>
+	</body>
+</html>
