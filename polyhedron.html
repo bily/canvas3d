@@ -15,35 +15,46 @@
 	</head>
 	<body>
 		<script src="js/canvas3d.js"></script>
-		<script>
-			var scene,camera,renderer;
+		<script>			
+			var scene,camera,renderer,g,time;
 			init();
 			animate();
 			function init() {
+				time = Date.now();
 				var container = document.createElement( 'div' );
 				document.body.appendChild( container );
-				var c3d = new C3D();
 				renderer = new C3D.Renderer();
 				renderer.setSize(window.innerWidth, window.innerHeight);
-				container.appendChild( renderer.canvas );
-				var a = new C3D.Vector3(1,1,1);
-				var b = new C3D.Vector3(2,2,-2);
-				var c = C3D.Vector3.InnerProduct(a, b);
-				var d = C3D.Vector3.ExteriorProduct(a, b);
+				container.appendChild(renderer.canvas);
+				
+				//geometry
+				g = new C3D.Geometry();
+				g.addVertex(new C3D.Vector3(10 , 10, 0));
+				g.addVertex(new C3D.Vector3(-10 , 10, 0));
+				g.addVertex(new C3D.Vector3(-10 , -10, 0));
+				g.addVertex(new C3D.Vector3(10 , -10, 0));
+				g.addFace([g.vertices[0],g.vertices[1],g.vertices[2],g.vertices[3]]);
 				
 				//scene
 				scene = new C3D.Scene();
+				scene.add(g);
+				
 				//camera
-				camera = new C3D.Camera();
+				camera = new C3D.Camera(30, window.innerWidth / window.innerHeight);
+				camera.setPosition(new C3D.Vector3(0, 0, 100));
+				camera.setLookAt(new C3D.Vector3(0, 0, 0));
+				camera.setUpperPoint(new C3D.Vector3(0, 100, 0));
+				camera.initVector();
+				
 				//イベントリスナー　リサイズ
 				window.addEventListener('resize', onWindowResize, false);
 			}
 			function onWindowResize() {
 
-				camera.setAspect = window.innerWidth / window.innerHeight;
-				//camera.updateProjectionMatrix();
+				camera.setAspect(window.innerWidth / window.innerHeight);
+				camera.initVector();
 
-				renderer.setSize( window.innerWidth, window.innerHeight);
+				renderer.setSize(window.innerWidth, window.innerHeight);
 
 				render();
 
@@ -53,13 +64,10 @@
 				render();
 			}
 			function render() {
-				renderer.dot(new C3D.Vector2(10,10));
-				var a,b;
-				for (var i = 0; i <= 10; i++) {
-					a = new C3D.Vector2(0, i*20);
-					b = new C3D.Vector2(1000, i*20);
-					renderer.line(a, b);
-				}
+				console.log(1000 / (Date.now() - time));
+				time = Date.now();
+				g.rotateZ(Date.now()*0.00000000000002);
+				renderer.render(scene, camera);
 			}
 		</script>
 	</body>
